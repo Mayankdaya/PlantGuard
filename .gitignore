@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg-info/
+.eggs/
+*.egg
+
+# Environments
+.venv/
+venv/
+env/
+ENV/
+
+# IDE/Editor
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Flask uploads (keep folder, ignore files)
+Flask Deployed App/static/uploads/*
+!Flask Deployed App/static/uploads/.gitkeep
+
+# Model weights and large binaries
+Flask Deployed App/*.pt
+Model/*.pt
+*.pth
+*.onnx
+
+# Logs
+*.log
+
+# Node (if accidentally added)
+node_modules/

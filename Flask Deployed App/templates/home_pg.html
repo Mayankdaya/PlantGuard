@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PlantGuard • Smarter Plant Health</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='black'/%3E%3Ctext x='12' y='45' font-size='28' fill='%23e5e7eb' font-family='Arial, Helvetica, sans-serif'%3EPG%3C/text%3E%3C/svg%3E">
+  <meta name="theme-color" content="#0c0f10">
+  <style>
+    :root{
+      --primary:#9ca3af; --primary-600:#6b7280; --primary-700:#4b5563; --accent-2:#e5e7eb;
+      --bg-900:#0a0a0a; --bg-800:#0c0f10; --bg-700:#111316;
+      --text:#f3f4f6; --muted: rgba(255,255,255,.72);
+      --glass: rgba(255,255,255,.08); --glass-border: rgba(255,255,255,.14);
+      --radius-lg:16px; --radius-md:12px; --radius-sm:8px;
+      --shadow-lg:0 20px 60px rgba(0,0,0,.35);
+      --grid-size: 30px; --grid-line: rgba(255,255,255,0.12); --grid-opacity:.18;
+      --grid-diag-size: 60px; --grid-diag-line: rgba(255,255,255,0.08); --grid-diag-opacity:.14;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0; color:var(--text);
+      font-family:'Poppins', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      background-image:
+        radial-gradient(80% 60% at 15% -10%, rgba(156,163,175,0.12) 0%, rgba(156,163,175,0) 60%),
+        radial-gradient(70% 60% at 85% 110%, rgba(229,231,235,0.10) 0%, rgba(229,231,235,0) 60%),
+        linear-gradient(135deg, var(--bg-900), var(--bg-800), var(--bg-700));
+      background-size: 100% 100%, 100% 100%, 500% 500%;
+      background-position: top left, bottom right, center;
+      animation: backgroundShift 32s ease infinite;
+      min-height:100vh; overflow-x:hidden;
+    }
+    @keyframes backgroundShift { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+    /* Background grids */
+    .bg-grid{position:fixed; inset:0; pointer-events:none; z-index:0; opacity:var(--grid-opacity); background-image:repeating-linear-gradient(0deg,var(--grid-line) 0,var(--grid-line) 1px,transparent 1px,transparent var(--grid-size)),repeating-linear-gradient(90deg,var(--grid-line) 0,var(--grid-line) 1px,transparent 1px,transparent var(--grid-size)); mix-blend-mode:overlay}
+    .bg-grid-diag{position:fixed; inset:0; pointer-events:none; z-index:0; opacity:var(--grid-diag-opacity); background-image:repeating-linear-gradient(45deg,var(--grid-diag-line) 0,var(--grid-diag-line) 1px,transparent 1px,transparent var(--grid-diag-size)),repeating-linear-gradient(-45deg,var(--grid-diag-line) 0,var(--grid-diag-line) 1px,transparent 1px,transparent var(--grid-diag-size)); mix-blend-mode:overlay}
+    .global-spotlight{position:fixed; inset:-20%; pointer-events:none; z-index:-1; background:radial-gradient(600px 600px at var(--sx,50%) var(--sy,30%), rgba(229,231,235,0.10) 0%, rgba(156,163,175,0.07) 35%, transparent 70%); filter:blur(48px); opacity:.45; transition:opacity .25s ease; mix-blend-mode:screen}
+    .global-spotlight.fade{opacity:.4}
+    /* Vignette & noise overlays for premium depth */
+    .vignette{ position:fixed; inset:0; pointer-events:none; z-index:0; box-shadow: inset 0 0 200px rgba(0,0,0,.45) }
+    .noise{ position:fixed; inset:0; pointer-events:none; z-index:0; opacity:.035; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23n)' opacity='0.3'/%3E%3C/svg%3E"); mix-blend-mode: soft-light }
+
+
+    /* Navbar */
+    .pg-navbar{position:sticky; top:0; z-index:10; background:rgba(12,15,16,.6); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border-bottom:1px solid rgba(255,255,255,.08); transition: box-shadow .25s ease, background .25s ease}
+    .pg-navbar.scrolled{ background:rgba(12,15,16,.72); box-shadow:0 8px 30px rgba(0,0,0,.35) }
+    .pg-navbar .nav-link{color:var(--muted)}
+    .pg-navbar .nav-link:hover,.pg-navbar .nav-link:focus{color:#fff}
+    .pg-navbar .navbar-toggler{border-color:rgba(255,255,255,.35)}
+    .pg-navbar .navbar-toggler:focus{box-shadow:0 0 0 .15rem rgba(255,255,255,.25)}
+    .pg-navbar .navbar-toggler-icon{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255,255,255,0.85)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e")}
+    .brand{display:inline-flex; align-items:center; gap:10px}
+    .brand svg{width:22px; height:22px}
+    .brand-name{font-weight:700; background:linear-gradient(to right,#ffffff,#9ca3af); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent}
+
+
+    /* Hero */
+    .hero{max-width:1140px; margin:0 auto; padding:4.5rem 0 2.5rem}
+    .gradient-text{background:linear-gradient(90deg,#ffffff,#9ca3af); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent}
+    .hero-title{font-weight:800; line-height:1.02; letter-spacing:-.025em}
+    .hero-sub{color:var(--muted); max-width:760px; margin:.75rem auto 0; font-size:1.075rem}
+    /* Premium subtitle chip */
+    .hero-sub-chip{ display:inline-block; padding:10px 18px; border-radius:9999px; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.18); box-shadow:0 10px 30px rgba(0,0,0,.28); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); position:relative }
+    .hero-sub-chip .gradient-text{ background-size:200% 100%; animation: titleShimmer 8s ease infinite; text-shadow: 0 2px 8px rgba(0,0,0,.35) }
+    .hero-sub-chip::after{ content:''; position:absolute; left:14px; right:14px; bottom:-6px; height:2px; background:linear-gradient(90deg, rgba(255,255,255,.0), rgba(229,231,235,.45), rgba(255,255,255,.0)); filter:blur(0.5px); opacity:.8 }
+
+
+    /* Buttons (match index) */
+    .btn-primary-pg{background:linear-gradient(135deg,var(--primary),var(--primary-600)); border:0; color:#fff; border-radius:44px; padding:13px 26px; box-shadow:0 18px 40px rgba(156,163,175,.35); position:relative; overflow:hidden}
+    .btn-primary-pg::after{content:''; position:absolute; top:-20%; left:-50%; width:40%; height:140%; background:linear-gradient(120deg,rgba(255,255,255,0),rgba(255,255,255,.35),rgba(255,255,255,0)); transform:translateX(-120%) skewX(-20deg); transition:transform .6s ease; pointer-events:none}
+    .btn-primary-pg:hover::after{transform:translateX(250%) skewX(-20deg)}
+    .btn-primary-pg:hover,.btn-primary-pg:focus{opacity:.95; transform:translateY(-1px)}
+    .btn-secondary-pg{background:rgba(255,255,255,.10); border:1px solid rgba(255,255,255,.22); color:#fff; border-radius:44px; padding:12px 24px}
+    .btn-secondary-pg:hover,.btn-secondary-pg:focus{background:rgba(255,255,255,.18); color:#fff}
+    .dash-btn{background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.25); color:#fff}
+    .dash-btn:hover{background:rgba(255,255,255,.18); color:#fff}
+
+
+    /* Cards */
+    .glass-card{background:var(--glass); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); border:1px solid var(--glass-border); border-radius:var(--radius-lg); padding:1.1rem; box-shadow:0 10px 28px rgba(0,0,0,.26); transition:transform .25s ease, box-shadow .25s ease; position:relative; overflow:hidden}
+    .glass-card:hover{transform:translateY(-4px); box-shadow:0 16px 48px rgba(31,38,135,.28)}
+    /* Subtle per-card spotlight */
+    .glass-card::after{content:''; position:absolute; inset:-20%; pointer-events:none; background:radial-gradient(280px 220px at var(--mx, 50%) var(--my, 50%), rgba(229,231,235,0.18) 0%, rgba(156,163,175,0.10) 35%, transparent 70%); filter:blur(36px); opacity:0; transition:opacity .25s ease; z-index:-1}
+    /* Gradient border ring */
+    .glass-card::before{ content:''; position:absolute; inset:0; border-radius:inherit; padding:1px; background:linear-gradient(135deg, rgba(229,231,235,.35), rgba(156,163,175,.18));
+      /* gradient ring masking */
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      opacity:.65; pointer-events:none }
+    .glass-card:hover::after{opacity:.8}
+
+
+    .content-wrap{max-width:1140px; margin:0 auto; padding:0 10px}
+    footer{color:var(--muted)}
+
+
+    /* Premium badges and metrics */
+    .kpi-strip{ display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:16px }
+    .kpi{ background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); border-radius:10px; padding:.5rem .75rem; display:inline-flex; gap:10px; align-items:center }
+    .kpi .value{ font-weight:700 }
+    .kpi .label{ color:var(--muted); font-size:.9rem }
+
+
+    .section-divider{ max-width:1140px; margin:28px auto; border-top:1px solid rgba(255,255,255,.12); opacity:.75; filter: drop-shadow(0 8px 28px rgba(0,0,0,.35)) }
+
+
+    /* Steps */
+    .steps{ counter-reset: step; }
+    .step-card{ position:relative; padding-left:58px }
+    .step-card::before{ counter-increment: step; content: counter(step); position:absolute; left:16px; top:14px; width:32px; height:32px; border-radius:50%; display:grid; place-items:center; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.25); font-weight:700 }
+
+
+    /* Pricing */
+    .price{ font-size:2rem; font-weight:800 }
+    .feature-list{ list-style:none; padding-left:0; margin:0 }
+    .feature-list li{ display:flex; align-items:center; gap:8px; padding:.3rem 0; color:var(--muted) }
+    .check{ width:18px; height:18px; border-radius:4px; background:linear-gradient(135deg,var(--primary),var(--primary-600)); display:inline-block }
+
+
+    /* FAQ */
+    .accordion-button{ background:rgba(255,255,255,.06); color:var(--text); border:1px solid rgba(255,255,255,.12) }
+    .accordion-item{ background:transparent; border:none; margin-bottom:10px }
+    .accordion-body{ background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.10); border-top:none; color:var(--muted) }
+
+
+    /* Reveal animation */
+    @keyframes fadeUp { from { opacity:0; transform: translateY(14px) } to { opacity:1; transform:none } }
+    .reveal{ opacity:0; animation: fadeUp .8s ease forwards }
+    .reveal.delay-1{ animation-delay: .1s }
+    .reveal.delay-2{ animation-delay: .2s }
+    .reveal.delay-3{ animation-delay: .3s }
+    @media (max-width:992px){.hero{padding:4rem 0 2rem}}
+    @media (max-width:576px){.glass-card{padding:1rem}}
+    /* Skip link for keyboard users */
+    .skip-link{ position:absolute; left:-9999px; top:auto; width:1px; height:1px; overflow:hidden }
+    .skip-link:focus{ left:12px; top:12px; width:auto; height:auto; padding:8px 12px; border-radius:6px; background:rgba(255,255,255,.12); color:#fff; border:1px solid rgba(255,255,255,.3); z-index:1000 }
+
+
+    /* Footer premium top border */
+    footer::before{ content:''; position:absolute; left:0; right:0; top:0; height:1px; background: linear-gradient(90deg, rgba(255,255,255,.0), rgba(229,231,235,.45), rgba(255,255,255,.0)); opacity:.8 }
+  </style>
+</head>
+<body>
+  <a href="#main" class="skip-link">Skip to main content</a>
+  <!-- Background decorations -->
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="bg-grid-diag" aria-hidden="true"></div>
+  <div class="global-spotlight" aria-hidden="true"></div>
+  <div class="vignette" aria-hidden="true"></div>
+  <div class="noise" aria-hidden="true"></div>
+
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg pg-navbar" role="navigation" aria-label="Primary">
+    <div class="container">
+      <a class="navbar-brand brand" href="/" aria-label="PlantGuard Home">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs>
+            <linearGradient id="lg" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#ffffff"/>
+              <stop offset="100%" stop-color="#9ca3af"/>
+            </linearGradient>
+          </defs>
+          <path d="M4 13c6.5-.5 9-3.5 10.5-9.5 3.5 3.5 5.2 6.2 5 10.5-.2 4.3-3.4 7.5-7.5 7.5S4.2 18 4 13Z" stroke="url(#lg)" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M6.5 14.5c2-.2 5.5-1.2 7.5-3.5" stroke="url(#lg)" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+        <span class="brand-name">PlantGuard</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#pgNav" aria-controls="pgNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="pgNav">
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
+          <li class="nav-item"><a class="nav-link" href="#testimonials">Testimonials</a></li>
+          <li class="nav-item"><a class="nav-link" href="#pricing">Pricing</a></li>
+        </ul>
+        <div class="ms-lg-3 mt-2 mt-lg-0">
+          <a href="/index" class="btn btn-light btn-sm dash-btn">Go to Dashboard</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+
+  <main id="main" role="main">
+  <!-- SR live region -->
+  <div class="visually-hidden" id="srHome" aria-live="polite"></div>
+  <!-- Hero -->
+  <header class="hero text-center">
+    <h1 class="display-3 hero-title gradient-text reveal">Craft Healthy Crops, Together.</h1>
+    <p class="lead hero-sub hero-sub-chip mt-2 reveal delay-1"><span class="gradient-text">An enterprise‑grade AI scanner for plant disease detection. Upload a leaf photo and get instant, actionable insights.</span></p>
+    <div class="d-flex flex-wrap justify-content-center gap-3 mt-4 reveal delay-2">
+      <a href="/index" class="btn btn-primary-pg">Start Scanning</a>
+      <a href="#contact" class="btn btn-secondary-pg">Request a Demo</a>
+    </div>
+    <div class="kpi-strip reveal delay-3">
+      <div class="kpi"><span class="value">95%+</span><span class="label">Benchmark Accuracy</span></div>
+      <div class="kpi"><span class="value">~1s</span><span class="label">Avg. Response</span></div>
+      <div class="kpi"><span class="value">Open</span><span class="label">Source</span></div>
+    </div>
+  </header>
+
+
+  <!-- Feature Highlights -->
+  <section id="features" class="content-wrap">
+    <div class="row g-3" onmousemove="document.documentElement.style.setProperty('--mx', event.offsetX+'px'); document.documentElement.style.setProperty('--my', event.offsetY+'px');">
+      <div class="col-12 col-md-4">
+        <div class="glass-card h-100">
+          <h5 class="mb-2 gradient-text">Fast & Accurate</h5>
+          <p class="mb-0" style="color:var(--muted)">State-of-the-art models deliver reliable results with confidence scores.</p>
+        </div>
+      </div>
+      <div class="col-12 col-md-4">
+        <div class="glass-card h-100">
+          <h5 class="mb-2 gradient-text">Elegant Experience</h5>
+          <p class="mb-0" style="color:var(--muted)">Premium, distraction-free workflow designed for clarity and speed.</p>
+        </div>
+      </div>
+      <div class="col-12 col-md-4">
+        <div class="glass-card h-100">
+          <h5 class="mb-2 gradient-text">Open & Extensible</h5>
+          <p class="mb-0" style="color:var(--muted)">Bring your own datasets or models and tailor the predictions.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <div class="section-divider" aria-hidden="true"></div>
+
+
+  <!-- Minimal Why section -->
+  <section class="content-wrap">
+    <div class="glass-card">
+      <h5 class="mb-2 gradient-text">Why PlantGuard</h5>
+      <ul class="feature-list">
+        <li><span class="check"></span> Premium, focused workflow that saves time</li>
+        <li><span class="check"></span> Trusted results with clear confidence scores</li>
+        <li><span class="check"></span> Private by default — run locally or self‑host</li>
+        <li><span class="check"></span> Open-source foundation, extensible by design</li>
+      </ul>
+    </div>
+  </section>
+
+
+  <div class="section-divider" aria-hidden="true"></div>
+
+
+  <!-- Testimonials -->
+  <section id="testimonials" class="content-wrap">
+    <div class="row g-3">
+      <div class="col-12 col-lg-6">
+        <div class="glass-card h-100">
+          <h6 class="gradient-text mb-2">Loved by teams</h6>
+          <p class="mb-2" style="color:var(--muted)">“PlantGuard helped us flag early blight two weeks sooner. The clean UI reduced error and sped up our scouting.”</p>
+          <div class="gradient-text fw-semibold">— FarmOps Cooperative</div>
+        </div>
+      </div>
+      <div class="col-12 col-lg-6">
+        <div class="glass-card h-100">
+          <h6 class="gradient-text mb-2">Private by design</h6>
+          <p class="mb-2" style="color:var(--muted)">“Self‑hosting keeps our images on‑prem while delivering the insights our agronomists need day‑to‑day.”</p>
+          <div class="gradient-text fw-semibold">— AgriLab Research</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <div class="section-divider" aria-hidden="true"></div>
+
+
+  <!-- Pricing -->
+  <section id="pricing" class="content-wrap">
+    <div class="row g-3">
+      <div class="col-12 col-lg-4">
+        <div class="glass-card h-100">
+          <h5 class="gradient-text mb-2">Community</h5>
+          <div class="price gradient-text">Free</div>
+          <ul class="feature-list mt-2">
+            <li><span class="check"></span> Local dashboard</li>
+            <li><span class="check"></span> 38 classes</li>
+            <li><span class="check"></span> Open‑source</li>
+          </ul>
+          <a href="/index" class="btn btn-secondary-pg mt-3 w-100">Get Started</a>
+        </div>
+      </div>
+      <div class="col-12 col-lg-4">
+        <div class="glass-card h-100">
+          <h5 class="gradient-text mb-2">Pro</h5>
+          <div class="price gradient-text">$0</div>
+          <ul class="feature-list mt-2">
+            <li><span class="check"></span> Batch uploads</li>
+            <li><span class="check"></span> Exportable reports</li>
+            <li><span class="check"></span> Priority fixes</li>
+          </ul>
+          <a href="#contact" class="btn btn-primary-pg mt-3 w-100">Request Access</a>
+        </div>
+      </div>
+      <div class="col-12 col-lg-4">
+        <div class="glass-card h-100">
+          <h5 class="gradient-text mb-2">Enterprise</h5>
+          <div class="price gradient-text">Custom</div>
+          <ul class="feature-list mt-2">
+            <li><span class="check"></span> On‑prem deployment</li>
+            <li><span class="check"></span> Model fine‑tuning</li>
+            <li><span class="check"></span> SLA & support</li>
+          </ul>
+          <a href="#contact" class="btn btn-secondary-pg mt-3 w-100">Talk to Us</a>
+        </div>
+      </div>
+    </div>
+  </section>
+  <div class="section-divider" aria-hidden="true"></div>
+
+
+  <!-- Contact -->
+  <section id="contact" class="content-wrap mt-3">
+    <div class="glass-card">
+      <h5 class="gradient-text mb-2">Contact</h5>
+      <p class="mb-3" style="color:var(--muted)">Have questions or want a guided demo? We’re happy to help.</p>
+      <div class="d-flex flex-wrap gap-2">
+        <a href="https://github.com/" target="_blank" rel="noopener" class="btn btn-secondary-pg">Open GitHub</a>
+        <a href="mailto:hello@example.com" class="btn btn-primary-pg">Email Us</a>
+      </div>
+    </div>
+  </section>
+
+
+  </main>
+  <footer class="text-center mt-4 py-3 small" style="color:var(--muted); position:relative">© <span id="y"></span> PlantGuard. All rights reserved.</footer>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.getElementById('y').textContent = new Date().getFullYear();
+    // Global spotlight tracking
+    document.addEventListener('DOMContentLoaded', function(){
+      const spotlight = document.querySelector('.global-spotlight');
+      if (!spotlight) return;
+      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!prefersReduced) {
+        const setGlobalSpot = (e) => {
+          const x = (e.clientX / window.innerWidth) * 100;
+          const y = (e.clientY / window.innerHeight) * 100;
+          document.documentElement.style.setProperty('--sx', `${x}%` );
+          document.documentElement.style.setProperty('--sy', `${y}%` );
+        };
+        window.addEventListener('mousemove', setGlobalSpot);
+        window.addEventListener('scroll', () => {
+          spotlight.classList.add('fade');
+          clearTimeout(window.__homeSpotFadeTimer);
+          window.__homeSpotFadeTimer = setTimeout(()=>spotlight.classList.remove('fade'), 180);
+        }, { passive: true });
+      } else {
+        document.documentElement.style.setProperty('--sx', '50%');
+        document.documentElement.style.setProperty('--sy', '30%');
+      }
+      // Navbar shadow on scroll
+      const nav = document.querySelector('.pg-navbar');
+      const onScroll = () => {
+        if (window.scrollY > 6) nav.classList.add('scrolled'); else nav.classList.remove('scrolled');
+      };
+      onScroll();
+      window.addEventListener('scroll', onScroll, { passive: true });
+      // Intersection-based reveal for cards/sections
+      const revealables = document.querySelectorAll('.glass-card, .content-wrap h5, .kpi');
+      const io = new IntersectionObserver((entries)=>{
+        entries.forEach(e=>{ if (e.isIntersecting) { e.target.classList.add('reveal'); io.unobserve(e.target); } });
+      }, { threshold: 0.12 });
+      revealables.forEach(el=> io.observe(el));
+    });
+  </script>
+</body>
+</html>

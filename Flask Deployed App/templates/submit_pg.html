@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{ title }} • Result • PlantGuard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <meta name="theme-color" content="#0c0f10">
+  <style>
+    :root{ --primary:#9ca3af; --primary-600:#6b7280; --primary-700:#4b5563; --accent-2:#e5e7eb; --bg-900:#0a0a0a; --bg-800:#0c0f10; --bg-700:#111316; --text:#f3f4f6; --muted: rgba(255,255,255,.72); --glass: rgba(255,255,255,.08); --glass-border: rgba(255,255,255,.14); --radius-lg:16px; --shadow-lg:0 20px 60px rgba(0,0,0,.35) }
+    *{box-sizing:border-box}
+    body{ margin:0; color:var(--text); font-family:'Poppins', system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background-image: radial-gradient(80% 60% at 15% -10%, rgba(156,163,175,0.12) 0%, rgba(156,163,175,0) 60%), radial-gradient(70% 60% at 85% 110%, rgba(229,231,235,0.10) 0%, rgba(229,231,235,0) 60%), linear-gradient(135deg, var(--bg-900), var(--bg-800), var(--bg-700)); background-size: 100% 100%, 100% 100%, 500% 500%; background-position: top left, bottom right, center; animation: bg 32s ease infinite; min-height:100vh; overflow-x:hidden }
+    @keyframes bg { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+    .bg-grid{position:fixed; inset:0; pointer-events:none; z-index:0; opacity:.18; background-image:repeating-linear-gradient(0deg,rgba(255,255,255,0.12) 0,rgba(255,255,255,0.12) 1px,transparent 1px,transparent 30px),repeating-linear-gradient(90deg,rgba(255,255,255,0.12) 0,rgba(255,255,255,0.12) 1px,transparent 1px,transparent 30px); mix-blend-mode:overlay}
+    .content-wrap{max-width:1140px; margin:0 auto; padding:0 10px}
+    .glass-card{background:var(--glass); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); border:1px solid var(--glass-border); border-radius:var(--radius-lg); padding:1.25rem; box-shadow:0 10px 28px rgba(0,0,0,.26)}
+    .btn-primary-pg{background:linear-gradient(135deg,var(--primary),var(--primary-600)); border:0; color:#fff; border-radius:44px; padding:12px 22px}
+    .btn-secondary-pg{background:rgba(255,255,255,.10); border:1px solid rgba(255,255,255,.22); color:#fff; border-radius:44px; padding:12px 22px}
+    .gradient-text{background:linear-gradient(90deg,#ffffff,#9ca3af); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent}
+    .section-divider{ max-width:1140px; margin:24px auto; border-top:1px solid rgba(255,255,255,.12); opacity:.75 }
+    .badge-chip{ display:inline-block; padding:8px 14px; border-radius:9999px; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.18) }
+  </style>
+</head>
+<body>
+  <div class="bg-grid" aria-hidden="true"></div>
+
+  <header class="text-center py-4">
+    <div class="content-wrap">
+      <a href="/" class="text-decoration-none" style="color:var(--accent-2)"><strong>PlantGuard</strong></a>
+    </div>
+  </header>
+
+  <main class="content-wrap">
+    <!-- Title and actions -->
+    <section class="text-center mb-3">
+      <div class="badge-chip mb-2">Prediction Result</div>
+      <h1 class="display-6 gradient-text">{{ title }}</h1>
+      <div class="mt-3 d-flex justify-content-center gap-2">
+        <a href="/index" class="btn btn-secondary-pg">New Scan</a>
+        <a href="/" class="btn btn-primary-pg">Home</a>
+      </div>
+    </section>
+
+    <div class="section-divider" aria-hidden="true"></div>
+
+    <!-- Result cards -->
+    <section class="row g-3 align-items-stretch">
+      <div class="col-12 col-lg-5">
+        <div class="glass-card h-100 text-center">
+          <img src="{{ image_url }}" alt="{{ title }}" class="img-fluid" style="border-radius:12px; max-height:420px; width:auto" />
+        </div>
+      </div>
+      <div class="col-12 col-lg-7">
+        <div class="glass-card h-100">
+          <h5 class="gradient-text mb-2">
+            {% if pred==3 or pred==5 or pred==7 or pred==11 or pred==15 or pred==18 or pred==20 or pred==23 or pred==24 or pred==25 or pred==28 or pred==38 %}
+              Tips to Grow Healthy Plants
+            {% else %}
+              Brief Description
+            {% endif %}
+          </h5>
+          <p style="color:var(--muted); white-space:pre-line">{{ desc }}</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="row g-3 mt-1">
+      <div class="col-12 col-lg-7">
+        <div class="glass-card h-100">
+          <h5 class="gradient-text mb-2">
+            {% if pred==3 or pred==5 or pred==7 or pred==11 or pred==15 or pred==18 or pred==20 or pred==23 or pred==24 or pred==25 or pred==28 or pred==38 %}
+              Benefits
+            {% else %}
+              Prevent This Plant Disease (Recommended Steps)
+            {% endif %}
+          </h5>
+          <p style="color:var(--muted); white-space:pre-line">{{ prevent }}</p>
+        </div>
+      </div>
+
+      {% if pred!=4 %}
+      <div class="col-12 col-lg-5">
+        <div class="glass-card h-100 text-center">
+          <h6 class="gradient-text mb-2">
+            {% if pred==3 or pred==5 or pred==7 or pred==11 or pred==15 or pred==18 or pred==20 or pred==23 or pred==24 or pred==25 or pred==28 or pred==38 %}
+              Fertilizer
+            {% else %}
+              Supplement
+            {% endif %}
+          </h6>
+          <img src="{{ simage }}" alt="{{ sname }}" class="img-fluid" style="border-radius:12px; max-height:360px; width:auto"/>
+          <div class="mt-3 fw-semibold">{{ sname }}</div>
+          <a target="_blank" href="{{ buy_link }}" class="btn btn-primary-pg mt-2">Buy Product</a>
+        </div>
+      </div>
+      {% endif %}
+    </section>
+
+    <div class="text-center my-4">
+      <a href="/index" class="btn btn-secondary-pg">Scan Another Image</a>
+    </div>
+  </main>
+
+  <footer class="text-center py-3 small" style="color:var(--muted)">© <script>document.write(new Date().getFullYear())</script> PlantGuard. All rights reserved.</footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
