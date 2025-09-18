@@ -1,0 +1,18 @@
+# Keep Docker build context small; do NOT exclude the model file inside "Flask Deployed App/"
+# Project-level ignores
+.git/
+**/__pycache__/
+**/*.pyc
+.venv/
+node_modules/
+
+# Large or dev-only folders not needed in the image (app copies only "Flask Deployed App/")
+Model/
+demo_images/
+test_images/
+assets/
+
+# Misc
+.DS_Store
+README.md
+render.yaml

@@ -10,6 +10,8 @@ python-dateutil==2.9.0.post0
 pytz==2024.1
 typing-extensions==4.12.2
 Werkzeug==2.2.3
+requests==2.32.3
+gdown==5.2.0
 
 # Use CPU-only PyTorch wheels compatible with Python 3.10
 --extra-index-url https://download.pytorch.org/whl/cpu

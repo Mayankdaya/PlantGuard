@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: plantguard
+    env: python
+    rootDir: Flask Deployed App
+    plan: free
+    buildCommand: |
+      pip install -r requirements.txt
+      # Optionally download model weights if provided via env (recommended)
+      if [ -n "$MODEL_URL" ]; then \
+        echo "Downloading model from $MODEL_URL"; \
+        curl -L "$MODEL_URL" -o "plant_disease_model_1.pt"; \
+      else \
+        echo "MODEL_URL not set; expecting plant_disease_model_1.pt to be present in repo"; \
+      fi
+    startCommand: gunicorn -w 2 -k gthread -b 0.0.0.0:$PORT app:app
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.10.13
+      # Optional: point to a hosted model file; set this in the Render dashboard or here with a URL
+      # - key: MODEL_URL
+      #   value: https://your-bucket/plant_disease_model_1.pt
+      # Optional: override model path (defaults to ./plant_disease_model_1.pt inside the service root)
+      # - key: MODEL_PATH
+      #   value: /opt/render/project/src/Flask Deployed App/plant_disease_model_1.pt
