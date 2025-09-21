@@ -16,3 +16,6 @@ assets/
 .DS_Store
 README.md
 render.yaml
+
+# For Hugging Face Spaces: exclude the heavy local model file; app will fetch via MODEL_URL if needed
+Flask Deployed App/plant_disease_model_1.pt

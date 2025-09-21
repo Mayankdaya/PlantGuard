@@ -20,10 +20,10 @@ RUN pip install --no-cache-dir -r /app/requirements.txt
 # Copy app source
 COPY ["Flask Deployed App/", "/app/"]
 
-# Expose port expected by hosting platforms (Hugging Face Spaces uses 7860 by default)
-EXPOSE 7860
+# Expose port expected by Fly.io config (internal_port=5000)
+EXPOSE 5000
 
-# Default command: bind to PORT if provided (fallback 7860)
+# Default command: bind to PORT if provided (fallback 5000)
 # If you prefer Flask dev server, replace with: python app.py
-ENV PORT=7860
+ENV PORT=5000
 CMD ["bash", "-lc", "gunicorn -w 2 -b 0.0.0.0:${PORT} app:app"]
