@@ -512,7 +512,6 @@ Special thanks to the **PlantVillage** dataset creators and the open-source comm
 
 **⭐ Star this repository if PlantGuard helped you!**
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=12&height=100&section=footer&animation=fadeIn">
 
 </div>
 
@@ -521,4 +520,4 @@ Special thanks to the **PlantVillage** dataset creators and the open-source comm
 <div align="center">
   <img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&size=16&duration=4000&pause=1000&color=6B7280&center=true&vCenter=true&width=600&lines=Thank+you+for+choosing+PlantGuard;Revolutionizing+agriculture+with+AI;Plant+health%2C+simplified." alt="Footer Animation" />
 </div>
->>>>>>> 2b891d0fe2b92c980021f67f48349803c6641eff
+
