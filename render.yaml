@@ -5,22 +5,35 @@ services:
     rootDir: Flask Deployed App
     plan: free
     buildCommand: |
+      echo "🌱 Setting up PlantGuard deployment..."
       pip install -r requirements.txt
-      # Optionally download model weights if provided via env (recommended)
-      if [ -n "$MODEL_URL" ]; then \
-        echo "Downloading model from $MODEL_URL"; \
-        curl -L "$MODEL_URL" -o "plant_disease_model_1.pt"; \
-      else \
-        echo "MODEL_URL not set; expecting plant_disease_model_1.pt to be present in repo"; \
+      echo "✅ Dependencies installed"
+      
+      # Verify model file exists
+      if [ -f "plant_disease_model_1.pt" ]; then
+        echo "✅ Model file found: $(ls -lh plant_disease_model_1.pt | awk '{print $5}')"
+      else
+        echo "⚠️  Model file not found - checking for download URL"
+        if [ -n "$MODEL_URL" ]; then
+          echo "Downloading model from $MODEL_URL"
+          curl -L "$MODEL_URL" -o "plant_disease_model_1.pt"
+          echo "✅ Model downloaded successfully"
+        else
+          echo "❌ No model file or URL provided"
+          exit 1
+        fi
       fi
+      
+      echo "🚀 Build complete - ready to start PlantGuard"
     startCommand: gunicorn -w 2 -k gthread -b 0.0.0.0:$PORT app:app
     autoDeploy: true
     envVars:
       - key: PYTHON_VERSION
         value: 3.10.13
-      # Optional: point to a hosted model file; set this in the Render dashboard or here with a URL
+      - key: FLASK_ENV
+        value: production
+      - key: FLASK_DEBUG
+        value: "0"
+      # Optional: point to a hosted model file if not included in repo
       # - key: MODEL_URL
       #   value: https://your-bucket/plant_disease_model_1.pt
-      # Optional: override model path (defaults to ./plant_disease_model_1.pt inside the service root)
-      # - key: MODEL_PATH
-      #   value: /opt/render/project/src/Flask Deployed App/plant_disease_model_1.pt
